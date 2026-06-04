@@ -21,6 +21,8 @@ from security.file_scanner import FileScanner
 from security.connection_monitor import ConnectionMonitor
 from security.ddos_monitor import DDoSMonitor
 from security.bot_detector import BotDetector
+from security.ransomware_monitor import RansomwareMonitor
+from security.ai_analyst import AIAnalyst
 
 
 class CommandRouter:
@@ -49,6 +51,8 @@ class CommandRouter:
         self.connection_monitor = ConnectionMonitor()
         self.ddos_monitor = DDoSMonitor()
         self.bot_detector = BotDetector()
+        self.ransomware_monitor = RansomwareMonitor()
+        self.ai_analyst = AIAnalyst()
 
         # Intent patterns — order matters (first match wins)
         self.intent_patterns = [
@@ -87,6 +91,12 @@ class CommandRouter:
             (r"\b(?:scan|check) for bots?\b|\bbot scan\b", self._handle_bot_scan),
             (r"\b(?:check|inspect) process (.+?)(?:\s|$)", self._handle_check_process),
             (r"\bsuspicious processes\b", self._handle_suspicious_processes),
+
+            # ─── Ransomware & AI ────────────────────
+            (r"\b(?:enable|start) ransomware (?:monitor|protection|shield)\b", self._handle_start_ransomware),
+            (r"\b(?:disable|stop) ransomware (?:monitor|protection|shield)\b", self._handle_stop_ransomware),
+            (r"\b(?:generate|create) (?:a )?(?:security |threat )?report\b", self._handle_generate_report),
+            (r"\banalyze threat(?:s)?\b", self._handle_generate_report),
 
             # ─── Web Commands ───────────────────────
             (r"\bsearch (?:on )?youtube (?:for )?(.+)\b", self._handle_youtube_search),
@@ -239,6 +249,17 @@ class CommandRouter:
 
     async def _handle_suspicious_processes(self, match, command):
         return self.bot_detector.list_suspicious_processes()
+
+    # ─── Ransomware & AI Handlers ─────────────────────
+
+    async def _handle_start_ransomware(self, match, command):
+        return self.ransomware_monitor.start_monitor()
+
+    async def _handle_stop_ransomware(self, match, command):
+        return self.ransomware_monitor.stop_monitor()
+
+    async def _handle_generate_report(self, match, command):
+        return await self.ai_analyst.generate_report()
 
     # ─── Web Handlers ─────────────────────────────────
 
