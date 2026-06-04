@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="J.A.R.V.I.S — Cybersecurity AI Voice Assistant HUD Dashboard">
+    <title>J.A.R.V.I.S — Cybersecurity AI Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/hud.css">
+</head>
+<body>
+    <!-- Boot Screen -->
+    <div id="boot-screen">
+        <div class="boot-content">
+            <div class="boot-logo">J.A.R.V.I.S</div>
+            <div class="boot-subtitle">CYBERSECURITY AI VOICE ASSISTANT</div>
+            <div class="boot-progress">
+                <div class="boot-progress-bar" id="boot-progress-bar"></div>
+            </div>
+            <div class="boot-status" id="boot-status">Initializing systems...</div>
+        </div>
+    </div>
+
+    <!-- Main HUD -->
+    <div id="hud-container" class="hidden">
+        <!-- Particle Canvas Background -->
+        <canvas id="particle-canvas"></canvas>
+
+        <!-- Scan Line Overlay -->
+        <div class="scanline-overlay"></div>
+
+        <!-- Top Bar -->
+        <header class="hud-topbar">
+            <div class="topbar-left">
+                <div class="logo-mark">◉</div>
+                <h1 class="logo-text">J.A.R.V.I.S</h1>
+                <span class="version-badge">v2.0</span>
+                <span class="version-badge security-badge">🔐 SEC-OPS</span>
+            </div>
+            <div class="topbar-center">
+                <div class="status-indicator" id="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text" id="status-text">INITIALIZING</span>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <button class="hud-btn" id="settings-btn" title="Settings">⚙️</button>
+                <div class="clock" id="clock">00:00:00</div>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="hud-grid">
+
+            <!-- Left Panel — System & Security Status -->
+            <aside class="hud-panel panel-left">
+                <div class="panel-header">
+                    <span class="panel-title">SYSTEM STATUS</span>
+                    <span class="panel-corner tl"></span>
+                    <span class="panel-corner tr"></span>
+                </div>
+                <div class="panel-body">
+                    <div class="stat-item">
+                        <span class="stat-label">MIC</span>
+                        <span class="stat-value" id="mic-status">OFFLINE</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">AI</span>
+                        <span class="stat-value" id="ai-status">OFFLINE</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">NET</span>
+                        <span class="stat-value" id="net-status">CHECKING</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">CPU</span>
+                        <span class="stat-value" id="cpu-status">--%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">RAM</span>
+                        <span class="stat-value" id="ram-status">--%</span>
+                    </div>
+                </div>
+
+                <!-- Security Panel -->
+                <div class="panel-header" style="margin-top: 16px;">
+                    <span class="panel-title">🔐 SECURITY</span>
+                </div>
+                <div class="panel-body">
+                    <div class="threat-level" id="threat-level">
+                        <div class="threat-gauge">
+                            <div class="threat-fill" id="threat-fill"></div>
+                        </div>
+                        <span class="threat-label" id="threat-label">SCANNING...</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">CONNECTIONS</span>
+                        <span class="stat-value" id="conn-count">--</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">SUSPICIOUS</span>
+                        <span class="stat-value danger" id="suspicious-count">--</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">LISTENING</span>
+                        <span class="stat-value" id="listening-ports">--</span>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="panel-header" style="margin-top: 16px;">
+                    <span class="panel-title">QUICK ACTIONS</span>
+                </div>
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="sendCommand('scan my network')">🔍 Net Scan</button>
+                    <button class="action-btn" onclick="sendCommand('security status')">🛡️ Sec Status</button>
+                    <button class="action-btn" onclick="sendCommand('show active connections')">🔗 Connections</button>
+                    <button class="action-btn" onclick="sendCommand('check wifi security')">📶 Wi-Fi</button>
+                    <button class="action-btn" onclick="sendCommand('check for ddos')">🚨 DDoS Check</button>
+                    <button class="action-btn" onclick="sendCommand('scan for bots')">🤖 Bot Scan</button>
+                    <button class="action-btn" onclick="sendCommand('generate a secure password')">🔑 Password</button>
+                    <button class="action-btn" onclick="sendCommand('take a screenshot')">📸 Screenshot</button>
+                </div>
+            </aside>
+
+            <!-- Center Panel — Orb & Transcript -->
+            <section class="hud-panel panel-center">
+                <!-- JARVIS Orb -->
+                <div class="orb-container">
+                    <div class="orb-rings">
+                        <div class="ring ring-1"></div>
+                        <div class="ring ring-2"></div>
+                        <div class="ring ring-3"></div>
+                    </div>
+                    <div class="orb" id="jarvis-orb">
+                        <div class="orb-core"></div>
+                        <div class="orb-pulse"></div>
+                    </div>
+                    <canvas id="waveform-canvas"></canvas>
+                </div>
+
+                <!-- Live Transcript -->
+                <div class="transcript-area">
+                    <div class="transcript-label">TRANSCRIPT</div>
+                    <div class="transcript-text" id="transcript-text">
+                        Say "Jarvis" followed by a command...
+                    </div>
+                </div>
+
+                <!-- Response Area -->
+                <div class="response-area" id="response-area">
+                    <div class="response-label">JARVIS</div>
+                    <div class="response-text" id="response-text"></div>
+                </div>
+            </section>
+
+            <!-- Right Panel — Conversation History -->
+            <aside class="hud-panel panel-right">
+                <div class="panel-header">
+                    <span class="panel-title">COMMAND HISTORY</span>
+                    <span class="panel-corner tl"></span>
+                    <span class="panel-corner tr"></span>
+                </div>
+                <div class="panel-body history-body" id="history-container">
+                    <div class="history-empty">No commands yet</div>
+                </div>
+
+                <!-- Security Events -->
+                <div class="panel-header" style="margin-top: 16px;">
+                    <span class="panel-title">🔐 SECURITY LOG</span>
+                </div>
+                <div class="panel-body security-log" id="security-log">
+                    <div class="log-entry">
+                        <span class="log-time">--:--</span>
+                        <span class="log-msg">Waiting for security data...</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Bottom Bar -->
+        <footer class="hud-bottombar">
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="command-input"
+                    class="command-input"
+                    placeholder="Type a command or press Space for push-to-talk..."
+                    autocomplete="off"
+                >
+                <button class="send-btn" id="send-btn" onclick="sendInputCommand()">▶</button>
+            </div>
+            <div class="bottombar-right">
+                <button class="ptt-btn" id="ptt-btn">
+                    <span class="ptt-icon">🎤</span>
+                    <span class="ptt-text">PUSH TO TALK</span>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ SETTINGS</h2>
+                <button class="modal-close" id="settings-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label class="setting-label">Gemini API Key</label>
+                    <input type="password" id="gemini-key-input" class="setting-input" placeholder="Enter Gemini API key...">
+                    <span class="setting-hint">Get free key at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a></span>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">VirusTotal API Key</label>
+                    <input type="password" id="vt-key-input" class="setting-input" placeholder="Enter VirusTotal API key...">
+                    <span class="setting-hint">Get free key at <a href="https://www.virustotal.com/gui/join-us" target="_blank">virustotal.com</a></span>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">AbuseIPDB API Key</label>
+                    <input type="password" id="abuse-key-input" class="setting-input" placeholder="Enter AbuseIPDB API key...">
+                    <span class="setting-hint">Get free key at <a href="https://www.abuseipdb.com/account/plans" target="_blank">abuseipdb.com</a></span>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Password Breach Check</label>
+                    <input type="password" id="password-check-input" class="setting-input" placeholder="Enter password to check...">
+                    <button class="action-btn" onclick="checkPasswordBreach()" style="margin-top: 8px;">Check Breach Status</button>
+                    <span class="setting-hint">Uses k-Anonymity — your password never leaves this machine</span>
+                </div>
+                <button class="save-btn" onclick="saveSettings()">SAVE SETTINGS</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/animations.js"></script>
+    <script src="/js/visualizer.js"></script>
+    <script src="/js/security-panel.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

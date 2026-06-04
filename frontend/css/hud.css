@@ -1,0 +1,236 @@
+/* ═══════════════════════════════════════════════════════
+   J.A.R.V.I.S — HUD Styles
+   Orb, Waveform, Rings, Animated Elements
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Orb Container ──────────────────────────────────── */
+.orb-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ─── Orb Core ───────────────────────────────────────── */
+.orb {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+.orb-core {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(var(--primary-rgb), 0.8) 0%,
+        rgba(var(--primary-rgb), 0.3) 40%,
+        rgba(var(--primary-rgb), 0.05) 70%,
+        transparent 100%
+    );
+    box-shadow:
+        0 0 20px rgba(var(--primary-rgb), 0.4),
+        0 0 40px rgba(var(--primary-rgb), 0.2),
+        0 0 80px rgba(var(--primary-rgb), 0.1),
+        inset 0 0 20px rgba(var(--primary-rgb), 0.3);
+    animation: orbBreathe 4s ease-in-out infinite;
+    transition: all 0.5s ease;
+}
+
+/* State-driven orb colors */
+.orb.listening .orb-core {
+    background: radial-gradient(
+        circle,
+        rgba(var(--success-rgb), 0.8) 0%,
+        rgba(var(--success-rgb), 0.3) 40%,
+        transparent 100%
+    );
+    box-shadow:
+        0 0 30px rgba(var(--success-rgb), 0.5),
+        0 0 60px rgba(var(--success-rgb), 0.3);
+    animation: orbBreathe 1.5s ease-in-out infinite;
+}
+
+.orb.processing .orb-core {
+    background: radial-gradient(
+        circle,
+        rgba(var(--warning-rgb), 0.8) 0%,
+        rgba(var(--warning-rgb), 0.3) 40%,
+        transparent 100%
+    );
+    box-shadow:
+        0 0 30px rgba(var(--warning-rgb), 0.5),
+        0 0 60px rgba(var(--warning-rgb), 0.3);
+    animation: orbSpin 1s linear infinite;
+}
+
+.orb.speaking .orb-core {
+    background: radial-gradient(
+        circle,
+        rgba(var(--primary-rgb), 1) 0%,
+        rgba(var(--primary-rgb), 0.5) 40%,
+        transparent 100%
+    );
+    box-shadow:
+        0 0 40px rgba(var(--primary-rgb), 0.6),
+        0 0 80px rgba(var(--primary-rgb), 0.3);
+}
+
+.orb.error .orb-core {
+    background: radial-gradient(
+        circle,
+        rgba(var(--danger-rgb), 0.8) 0%,
+        rgba(var(--danger-rgb), 0.3) 40%,
+        transparent 100%
+    );
+    box-shadow:
+        0 0 30px rgba(var(--danger-rgb), 0.5),
+        0 0 60px rgba(var(--danger-rgb), 0.3);
+}
+
+@keyframes orbBreathe {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.85; }
+}
+
+@keyframes orbSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+/* ─── Orb Pulse Ring ─────────────────────────────────── */
+.orb-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 1px solid rgba(var(--primary-rgb), 0.3);
+    animation: orbPulseExpand 3s ease-out infinite;
+}
+
+@keyframes orbPulseExpand {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* ─── Rotating Rings ─────────────────────────────────── */
+.orb-rings {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(var(--primary-rgb), 0.1);
+}
+
+.ring-1 {
+    inset: 10px;
+    border-color: rgba(var(--primary-rgb), 0.15);
+    border-top-color: rgba(var(--primary-rgb), 0.5);
+    animation: ringRotate 8s linear infinite;
+}
+
+.ring-2 {
+    inset: 0;
+    border-color: rgba(var(--primary-rgb), 0.08);
+    border-right-color: rgba(var(--primary-rgb), 0.3);
+    animation: ringRotate 12s linear infinite reverse;
+}
+
+.ring-3 {
+    inset: -10px;
+    border-color: rgba(var(--primary-rgb), 0.05);
+    border-bottom-color: rgba(var(--primary-rgb), 0.2);
+    animation: ringRotate 16s linear infinite;
+}
+
+@keyframes ringRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* State-driven ring colors */
+.orb.listening ~ .orb-rings .ring {
+    border-top-color: rgba(var(--success-rgb), 0.5);
+}
+.orb.processing ~ .orb-rings .ring {
+    animation-duration: 2s;
+    border-top-color: rgba(var(--warning-rgb), 0.5);
+}
+
+/* ─── Waveform Canvas ────────────────────────────────── */
+#waveform-canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 4;
+}
+
+/* ─── Panel Corner Brackets ──────────────────────────── */
+.panel-corner {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+}
+.panel-corner.tl {
+    top: 0;
+    left: 0;
+    border-top: 1px solid var(--primary);
+    border-left: 1px solid var(--primary);
+}
+.panel-corner.tr {
+    top: 0;
+    right: 0;
+    border-top: 1px solid var(--primary);
+    border-right: 1px solid var(--primary);
+}
+
+/* ─── Typing Animation ───────────────────────────────── */
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--primary);
+    margin-left: 2px;
+    animation: cursorBlink 0.8s step-end infinite;
+    vertical-align: text-bottom;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* ─── Responsive ─────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .hud-grid {
+        grid-template-columns: 200px 1fr 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hud-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+    .panel-left, .panel-right {
+        display: none;
+    }
+    .orb-container {
+        width: 150px;
+        height: 150px;
+    }
+}

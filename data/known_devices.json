@@ -1,0 +1,58 @@
+{
+  "B4:86:18:A5:4F:7E": {
+    "ip": "192.168.1.1",
+    "mac": "B4:86:18:A5:4F:7E",
+    "hostname": "Unknown",
+    "vendor": "Unknown Vendor",
+    "first_seen": "2026-06-02T13:01:59.020420",
+    "last_seen": "2026-06-04T13:09:34.443868"
+  },
+  "F0:B4:D2:29:40:0B": {
+    "ip": "192.168.1.2",
+    "mac": "F0:B4:D2:29:40:0B",
+    "hostname": "Unknown",
+    "vendor": "Unknown Vendor",
+    "first_seen": "2026-06-02T13:02:03.995419",
+    "last_seen": "2026-06-04T13:09:39.493779"
+  },
+  "38:D5:7A:3F:05:65": {
+    "ip": "192.168.1.10",
+    "mac": "38:D5:7A:3F:05:65",
+    "hostname": "DESKTOP-QQGUVAH",
+    "vendor": "Unknown Vendor",
+    "first_seen": "2026-06-02T13:02:03.997823",
+    "last_seen": "2026-06-04T13:09:39.766265"
+  },
+  "BE:33:6A:BC:33:6A": {
+    "ip": "192.168.1.5",
+    "mac": "BE:33:6A:BC:33:6A",
+    "hostname": "Unknown",
+    "vendor": "Unknown Vendor",
+    "first_seen": "2026-06-02T13:02:08.975648",
+    "last_seen": "2026-06-04T13:09:45.082785"
+  },
+  "BE:33:6A:84:B8:34": {
+    "ip": "192.168.1.14",
+    "mac": "BE:33:6A:84:B8:34",
+    "hostname": "Unknown",
+    "vendor": "Unknown Vendor",
+    "first_seen": "2026-06-02T13:02:13.954609",
+    "last_seen": "2026-06-04T13:09:50.087840"
+  },
+  "2E:48:06:E3:09:21": {
+    "ip": "192.168.1.8",
+    "mac": "2E:48:06:E3:09:21",
+    "hostname": "Unknown",
+    "vendor": "Unknown Vendor",
+    "first_seen": "2026-06-04T13:09:56.936618",
+    "last_seen": "2026-06-04T13:09:56.936630"
+  },
+  "20:C1:9B:1D:8F:1C": {
+    "ip": "192.168.1.14",
+    "mac": "20:C1:9B:1D:8F:1C",
+    "hostname": "Unknown",
+    "vendor": "Unknown Vendor",
+    "first_seen": "2026-06-04T13:10:01.921482",
+    "last_seen": "2026-06-04T13:10:01.921505"
+  }
+}
