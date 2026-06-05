@@ -5,7 +5,7 @@
     "hostname": "Unknown",
     "vendor": "Unknown Vendor",
     "first_seen": "2026-06-02T13:01:59.020420",
-    "last_seen": "2026-06-04T13:09:34.443868"
+    "last_seen": "2026-06-05T09:47:31.716130"
   },
   "F0:B4:D2:29:40:0B": {
     "ip": "192.168.1.2",
@@ -13,7 +13,7 @@
     "hostname": "Unknown",
     "vendor": "Unknown Vendor",
     "first_seen": "2026-06-02T13:02:03.995419",
-    "last_seen": "2026-06-04T13:09:39.493779"
+    "last_seen": "2026-06-05T09:47:36.665074"
   },
   "38:D5:7A:3F:05:65": {
     "ip": "192.168.1.10",
@@ -21,7 +21,7 @@
     "hostname": "DESKTOP-QQGUVAH",
     "vendor": "Unknown Vendor",
     "first_seen": "2026-06-02T13:02:03.997823",
-    "last_seen": "2026-06-04T13:09:39.766265"
+    "last_seen": "2026-06-05T09:47:36.665897"
   },
   "BE:33:6A:BC:33:6A": {
     "ip": "192.168.1.5",
@@ -37,7 +37,7 @@
     "hostname": "Unknown",
     "vendor": "Unknown Vendor",
     "first_seen": "2026-06-02T13:02:13.954609",
-    "last_seen": "2026-06-04T13:09:50.087840"
+    "last_seen": "2026-06-05T09:47:41.664407"
   },
   "2E:48:06:E3:09:21": {
     "ip": "192.168.1.8",
@@ -54,5 +54,13 @@
     "vendor": "Unknown Vendor",
     "first_seen": "2026-06-04T13:10:01.921482",
     "last_seen": "2026-06-04T13:10:01.921505"
+  },
+  "10:B1:DF:68:AA:91": {
+    "ip": "192.168.1.2",
+    "mac": "10:B1:DF:68:AA:91",
+    "hostname": "LAPTOP-JLJBAM94",
+    "vendor": "Unknown Vendor",
+    "first_seen": "2026-06-05T09:47:45.236341",
+    "last_seen": "2026-06-05T09:47:45.236368"
   }
 }

@@ -19,3 +19,18 @@ scapy>=2.5.0
 python-nmap>=0.7.1
 cryptography>=41.0.0
 watchdog>=3.0.0
+
+# ─── Reporting ──────────────────────────────
+reportlab>=4.0.0
+
+# ─── Hands-free Voice (always-on wake word) ─
+vosk>=0.3.45
+pvporcupine>=3.0.0        # optional: best wake-word accuracy (needs free key)
+openwakeword>=0.6.0       # optional: open-source wake word, no key
+numpy>=1.24.0
+
+# ─── Real-time Desktop Alerts ───────────────
+plyer>=2.1.0              # cross-platform desktop notifications
+
+# ─── Windows Event Log monitoring (brute-force detection) ─
+pywin32>=306 ; sys_platform == "win32"

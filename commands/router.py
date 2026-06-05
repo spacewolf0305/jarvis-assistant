@@ -23,6 +23,11 @@ from security.ddos_monitor import DDoSMonitor
 from security.bot_detector import BotDetector
 from security.ransomware_monitor import RansomwareMonitor
 from security.ai_analyst import AIAnalyst
+from security.crypto_monitor import CryptoMonitor
+from security.process_monitor import ProcessMonitor
+from security.incident_report import IncidentReport
+from security.eventlog_monitor import EventLogMonitor
+from security.responder import Responder
 
 
 class CommandRouter:
@@ -53,6 +58,11 @@ class CommandRouter:
         self.bot_detector = BotDetector()
         self.ransomware_monitor = RansomwareMonitor()
         self.ai_analyst = AIAnalyst()
+        self.crypto_monitor = CryptoMonitor()
+        self.process_monitor = ProcessMonitor()
+        self.incident_report = IncidentReport()
+        self.eventlog_monitor = EventLogMonitor()
+        self.responder = Responder()
 
         # Intent patterns — order matters (first match wins)
         self.intent_patterns = [
@@ -95,7 +105,29 @@ class CommandRouter:
             # ─── Ransomware & AI ────────────────────
             (r"\b(?:enable|start) ransomware (?:monitor|protection|shield)\b", self._handle_start_ransomware),
             (r"\b(?:disable|stop) ransomware (?:monitor|protection|shield)\b", self._handle_stop_ransomware),
-            (r"\b(?:generate|create) (?:a )?(?:security |threat )?report\b", self._handle_generate_report),
+
+            # ─── Cryptojacking ──────────────────────
+            (r"\b(?:scan|check)(?: for)? crypto(?:jacking|mining|miner)?\b", self._handle_crypto_scan),
+            (r"\b(?:enable|start) crypto(?:jacking)? (?:monitor|protection)\b", self._handle_start_crypto),
+            (r"\b(?:disable|stop) crypto(?:jacking)? (?:monitor|protection)\b", self._handle_stop_crypto),
+
+            # ─── Fileless / Process Inspection ──────
+            (r"\b(?:scan|check)(?: for)? (?:fileless|malicious process(?:es)?|suspicious process(?:es)?)\b", self._handle_process_scan),
+            (r"\bscan processes\b", self._handle_process_scan),
+            (r"\b(?:enable|start) process (?:monitor|protection)\b", self._handle_start_process_mon),
+            (r"\b(?:disable|stop) process (?:monitor|protection)\b", self._handle_stop_process_mon),
+
+            # ─── Brute-force / Event Log ────────────
+            (r"\b(?:scan|check)(?: for)? (?:brute.?force|failed logins?|login attempts?)\b", self._handle_eventlog_scan),
+            (r"\b(?:enable|start) (?:event ?log|login|logon) (?:monitor|monitoring)\b", self._handle_start_eventlog),
+            (r"\b(?:disable|stop) (?:event ?log|login|logon) (?:monitor|monitoring)\b", self._handle_stop_eventlog),
+
+            # ─── Active Response ────────────────────
+            (r"\bblock (?:ip )?(\d{1,3}(?:\.\d{1,3}){3})\b", self._handle_block_ip),
+            (r"\bunblock (?:ip )?(\d{1,3}(?:\.\d{1,3}){3})\b", self._handle_unblock_ip),
+
+            # ─── Reports ────────────────────────────
+            (r"\b(?:generate|create|make) (?:a )?(?:pdf )?(?:incident |security |threat )report\b", self._handle_generate_report),
             (r"\banalyze threat(?:s)?\b", self._handle_generate_report),
 
             # ─── Web Commands ───────────────────────
@@ -258,8 +290,62 @@ class CommandRouter:
     async def _handle_stop_ransomware(self, match, command):
         return self.ransomware_monitor.stop_monitor()
 
+    # ─── Cryptojacking Handlers ───────────────────────
+
+    async def _handle_crypto_scan(self, match, command):
+        return self.crypto_monitor.scan()
+
+    async def _handle_start_crypto(self, match, command):
+        return self.crypto_monitor.start_monitor()
+
+    async def _handle_stop_crypto(self, match, command):
+        return self.crypto_monitor.stop_monitor()
+
+    # ─── Process / Fileless Handlers ──────────────────
+
+    async def _handle_process_scan(self, match, command):
+        return self.process_monitor.scan()
+
+    async def _handle_start_process_mon(self, match, command):
+        return self.process_monitor.start_monitor()
+
+    async def _handle_stop_process_mon(self, match, command):
+        return self.process_monitor.stop_monitor()
+
+    # ─── Brute-force / Event Log Handlers ─────────────
+
+    async def _handle_eventlog_scan(self, match, command):
+        return self.eventlog_monitor.scan()
+
+    async def _handle_start_eventlog(self, match, command):
+        return self.eventlog_monitor.start_monitor()
+
+    async def _handle_stop_eventlog(self, match, command):
+        return self.eventlog_monitor.stop_monitor()
+
+    # ─── Active Response Handlers ─────────────────────
+
+    async def _handle_block_ip(self, match, command):
+        ip = match.group(1)
+        return self.responder.block_ip(ip, reason="manual command")
+
+    async def _handle_unblock_ip(self, match, command):
+        ip = match.group(1)
+        return self.responder.unblock_ip(ip)
+
+    # ─── Report Handler ───────────────────────────────
+
     async def _handle_generate_report(self, match, command):
-        return await self.ai_analyst.generate_report()
+        # First produce the structured PDF incident report from the event log.
+        path, msg = self.incident_report.generate(hours=24)
+        # Then add the AI analyst's narrative summary if available.
+        try:
+            ai_summary = await self.ai_analyst.generate_report()
+        except Exception:
+            ai_summary = None
+        if ai_summary:
+            return f"{msg}\n\n{ai_summary}"
+        return msg
 
     # ─── Web Handlers ─────────────────────────────────
 

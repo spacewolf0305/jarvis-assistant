@@ -17,6 +17,8 @@ try:
 except ImportError:
     WATCHDOG_AVAILABLE = False
 
+from security.event_store import get_store, Severity
+
 
 # Thresholds
 MODIFICATIONS_PER_SECOND = 5
@@ -57,6 +59,7 @@ class RansomwareMonitor:
         self._monitoring = False
         self.target_dir = None
         self.alerts = []
+        self.store = get_store()
 
     def start_monitor(self, path=None):
         """Start monitoring a directory (defaults to User's Documents)."""
@@ -105,6 +108,14 @@ class RansomwareMonitor:
         if ext in SUSPICIOUS_EXTENSIONS:
             alert = f"CRITICAL: Suspicious file extension '{ext}' detected on {os.path.basename(path)}."
             self.alerts.append(alert)
+            self.store.log_event(
+                source="ransomware_monitor", severity=Severity.CRITICAL,
+                threat_type="Ransomware", mitre_id="T1486",
+                message=f"Suspicious encrypted-file extension '{ext}' on {os.path.basename(path)}",
+                details=f"Full path: {path}",
+                mitigation=("Immediately disconnect this machine from the network, "
+                            "do not pay any ransom, and restore affected files from backup."),
+            )
 
     def _analyze_loop(self):
         """Continuously check for high-frequency modifications."""
@@ -123,6 +134,14 @@ class RansomwareMonitor:
                 alert = f"CRITICAL: Ransomware behavior detected! {count} files modified in {TIME_WINDOW_SEC} seconds."
                 if alert not in self.alerts:
                     self.alerts.append(alert)
+                    self.store.log_event(
+                        source="ransomware_monitor", severity=Severity.CRITICAL,
+                        threat_type="Ransomware", mitre_id="T1486",
+                        message=f"High-frequency file modification: {count} files in {TIME_WINDOW_SEC}s",
+                        details=f"Monitored directory: {self.target_dir}",
+                        mitigation=("Disconnect from the network immediately, isolate the host, "
+                                    "and restore from a known-good backup. Do not pay the ransom."),
+                    )
                 # Pause recording briefly to avoid spam
                 with self.lock:
                     self.event_queue.clear()

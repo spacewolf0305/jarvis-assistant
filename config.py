@@ -26,9 +26,35 @@ PREFERRED_VOICE = "female"  # "male" or "female"
 LISTEN_TIMEOUT = 5        # Seconds to wait for speech
 PHRASE_TIMEOUT = 10       # Max phrase duration
 
+# ─── Wake Word (hands-free, always-on) ─────────────────────
+# Engine selection: "auto" picks the best available at startup.
+#   auto | porcupine | openwakeword | vosk
+WAKE_ENGINE = "auto"
+# Porcupine is the most accurate engine; get a free key at console.picovoice.ai
+PORCUPINE_ACCESS_KEY = os.environ.get("PORCUPINE_ACCESS_KEY", "")
+# Path to the bundled Vosk model (used for command STT and as wake fallback)
+VOSK_MODEL_PATH = str(BASE_DIR / "model")
+# Seconds of silence that mark the end of a command. Lower = snappier
+# response, but too low can cut you off mid-sentence. Try 0.5–0.9.
+CMD_SILENCE_TIMEOUT = 0.7
+
+# ─── Real-time Alerts ──────────────────────────────────────
+ALERT_MIN_SEVERITY = 3    # 3 = HIGH; raise to 4 for CRITICAL-only spoken alerts
+ALERT_SPEAK = True        # Speak high-severity detections aloud
+AUTO_START_MONITORS = True  # Start background threat monitors on launch
+
+# ─── Active Response / Auto-Mitigation ─────────────────────
+# SAFETY: when False, all mitigations are SIMULATED (dry-run) — JARVIS
+# describes the action and logs it but does NOT touch the firewall, kill
+# processes, or move files. Set True only when you want real enforcement.
+AUTO_MITIGATE_EXECUTE = False
+# When True, a CRITICAL detection with a known source IP is auto-blocked
+# (still subject to AUTO_MITIGATE_EXECUTE and the IP safety guards).
+AUTO_BLOCK_ON_CRITICAL = False
+
 # ─── AI Settings ───────────────────────────────────────────
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL = "gemini-2.0-flash"
+GEMINI_MODEL = "gemini-2.5-flash"
 MAX_CONVERSATION_HISTORY = 10
 
 # ─── Security API Keys (free tiers) ───────────────────────

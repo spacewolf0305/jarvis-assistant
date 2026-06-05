@@ -33,6 +33,23 @@ app.mount("/css", StaticFiles(directory=str(config.FRONTEND_DIR / "css")), name=
 app.mount("/js", StaticFiles(directory=str(config.FRONTEND_DIR / "js")), name="js")
 
 
+@app.on_event("startup")
+async def _start_background_tasks():
+    """Launch the live telemetry / alert loop and background monitors."""
+    asyncio.create_task(security_refresh_loop())
+
+    # Auto-start continuous threat monitors so protection is on from boot
+    if getattr(config, "AUTO_START_MONITORS", False) and command_router:
+        for mon_attr in ("crypto_monitor", "process_monitor",
+                         "ddos_monitor", "ransomware_monitor"):
+            monitor = getattr(command_router, mon_attr, None)
+            if monitor and hasattr(monitor, "start_monitor"):
+                try:
+                    monitor.start_monitor()
+                except Exception:
+                    pass
+
+
 @app.get("/")
 async def serve_index():
     """Serve the main HUD page."""
@@ -126,16 +143,57 @@ async def broadcast(message):
     connected_clients.difference_update(disconnected)
 
 
-# ─── Security Dashboard Background Task ───────────────────
+# ─── Live telemetry helper ────────────────────────────────
+def get_live_telemetry():
+    """Snapshot of CPU / memory / network for real-time HUD streaming."""
+    try:
+        import psutil
+        net = psutil.net_io_counters()
+        return {
+            "cpu_percent": psutil.cpu_percent(interval=None),
+            "mem_percent": psutil.virtual_memory().percent,
+            "net_sent": net.bytes_sent,
+            "net_recv": net.bytes_recv,
+            "connections": len(psutil.net_connections(kind="inet")),
+        }
+    except Exception:
+        return {}
+
+
+# ─── Background Tasks: telemetry stream, security status, alerts ──
 async def security_refresh_loop():
-    """Periodically refresh security dashboard data."""
+    """Stream live telemetry, refresh security status, and dispatch alerts.
+
+    - Telemetry is pushed every few seconds for a real-time HUD.
+    - Full security status is pushed less often.
+    - New high-severity detections are dispatched (spoken + desktop toast)
+      and broadcast to the HUD the moment they appear in the event store.
+    """
+    from security.alert_manager import get_alert_manager
+    alert_mgr = get_alert_manager(
+        speaker=command_router.speaker if command_router else None
+    )
+
+    tick = 0
     while True:
         try:
-            await asyncio.sleep(60)
-            status = security_dashboard.get_status()
-            await broadcast({
-                "type": "security_status",
-                "data": status
-            })
+            await asyncio.sleep(2)
+            tick += 1
+
+            # Live telemetry every 2s
+            telemetry = get_live_telemetry()
+            if telemetry:
+                await broadcast({"type": "telemetry", "data": telemetry})
+
+            # New high-severity alerts — checked every cycle, pushed instantly
+            for ev in alert_mgr.check_new_alerts():
+                await broadcast({"type": "alert", "data": ev})
+
+            # Full security status every ~30s (15 ticks * 2s)
+            if tick % 15 == 0:
+                await broadcast({
+                    "type": "security_status",
+                    "data": security_dashboard.get_status(),
+                })
         except Exception:
             pass

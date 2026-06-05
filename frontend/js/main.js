@@ -75,10 +75,48 @@ function handleServerMessage(message) {
             updateSecurityPanel(message.data);
             break;
 
+        case 'telemetry':
+            updateTelemetry(message.data);
+            break;
+
+        case 'alert':
+            showRealtimeAlert(message.data);
+            break;
+
         case 'error':
             showError(message.data);
             break;
     }
+}
+
+// ─── Live Telemetry ─────────────────────────────────────
+function updateTelemetry(t) {
+    if (!t) return;
+    const set = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined && val !== null) el.textContent = val;
+    };
+    // Reuse the existing System Status / Security panel fields
+    set('cpu-status', t.cpu_percent !== undefined ? t.cpu_percent + '%' : undefined);
+    set('ram-status', t.mem_percent !== undefined ? t.mem_percent + '%' : undefined);
+    set('conn-count', t.connections);
+}
+
+// ─── Real-time Threat Alerts ────────────────────────────
+function showRealtimeAlert(ev) {
+    if (!ev) return;
+    // Reuse the security event log if present
+    if (typeof addSecurityEvent === 'function') {
+        addSecurityEvent(ev.threat_type || 'Threat', ev.message || '');
+    }
+    // Visible banner
+    const banner = document.getElementById('alert-banner');
+    if (banner) {
+        banner.textContent = `[${(ev.threat_type || 'THREAT').toUpperCase()}] ${ev.message || ''}`;
+        banner.classList.add('active');
+        setTimeout(() => banner.classList.remove('active'), 8000);
+    }
+    console.warn('JARVIS ALERT:', ev);
 }
 
 // ─── State Management ───────────────────────────────────
